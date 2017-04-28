@@ -32,33 +32,83 @@ function bp_activity_reactions_fetch() {
 		wp_send_json_error( $not_allowed );
 	}
 
-	$reactions = array();
+	//lets check if the activity ids exist to loop through
+	if ( ! empty( $_POST['activity_ids'] ) ) {
 
-	if ( ! empty( $_POST['activity_id'] ) ) {
-		$reactions_data = bp_reactions_activity_get_users( (int) $_POST['activity_id'] );
-	}
+		$reactions = [];
 
-	foreach ( (array) bp_reactions_get_reactions() as $key => $reaction ) {
-		$users = array();
+		//sets the counter for activity ids loop
+		$i = 0;
 
-		if ( isset( $reactions_data[ $reaction->reaction_type ]['users'] ) ) {
-			$users = $reactions_data[ $reaction->reaction_type ]['users'];
+		foreach( $_POST['activity_ids'] as $activity_id ) {
+
+			$reactions_data = bp_reactions_activity_get_users( (int) $activity_id );
+			
+			//loop through registered reactions
+			foreach( (array) bp_reactions_get_reactions() as $key => $reaction  ) {
+
+				//checks if current activity has any type of reactions based off number of user ids
+				if( ! empty( $reactions_data[ $reaction->reaction_type ] ) ) {
+					$user = in_array( bp_loggedin_user_id(), $reactions_data[$reaction->reaction_type]['users'] );
+				} else {
+					$user = 0;
+				}
+
+				//sets array to be sent back in json
+				$records = array(
+					'id' => $activity_id,
+					'emoji'   => $reaction->emoji
+				);
+
+				//if $user is empty then that means the user did not react to the activity yet
+				if( ! empty( $user ) ) {
+					$records['reacted'] = true;
+				} else {
+					$records['reacted'] = false;
+				}
+				
+				//calculates how many users reacted to the activity and returns it
+				if( ! empty( $user ) && count( $user ) > 0 ) {
+					$records['count'] = count( $reactions_data[$reaction->reaction_type]['users'] );
+				} else {
+					$records['count'] = 0;
+				}
+
+				//stores all data in grouped array keys per activity id
+				$reactions[$i][$key] = $records;
+
+			}
+
+			//counter for grouping reactions
+			$i++;
+
 		}
 
-		$reactions[ $key ] = array(
-			'reacted' => in_array( bp_loggedin_user_id(), $users ),
-			'emoji'   => $reaction->emoji,
-			'count'   => count( $users ),
-		);
+		wp_send_json_success( $reactions );
+
 	}
 
-	if ( empty( $reactions ) ) {
-		wp_send_json_error( array(
-			'message' => __( 'No registered reactions.', 'bp-reactions' ),
+	//lets get the reaction if it exists
+	if( ! empty( $_POST['activity_id'] ) ) {
+
+		//print_r( (array) bp_reactions_get_reactions() );
+
+		$activity_id = $_POST['activity_id'];	
+
+		$existing = bp_activity_get( array(
+			'show_hidden' => true,
+			'filter'      => array(
+				'user_id'    => bp_loggedin_user_id(),
+				'object'     => 'reactions',
+				'action'     => '',
+				'primary_id' => $activity_id,
+			),
 		) );
+
+		wp_send_json_success( $existing );
+
 	}
 
-	wp_send_json_success( $reactions );
 }
 add_action( 'wp_ajax_bp_activity_reactions_fetch', 'bp_activity_reactions_fetch' );
 add_action( 'wp_ajax_nopriv_bp_activity_reactions_fetch', 'bp_activity_reactions_fetch' );
@@ -77,6 +127,11 @@ function bp_activity_reactions_save() {
 		) );
 	}
 
+	/*echo "<pre>";
+	var_dump( $_POST );
+	echo "</pre>";
+	die();*/
+
 	$not_allowed = array( 'message' => __( 'You are not allowed to perform this action.', 'bp-reactions' ) );
 	$unknown     = array( 'message' => __( 'Oops unknown action.', 'bp-reactions' ) );
 
@@ -88,25 +143,30 @@ function bp_activity_reactions_save() {
 	$react = wp_parse_args( $_POST, array(
 		'activity_id' => 0,
 		'reaction'    => '',
-		'doaction'    => 'add',
+		'doaction'    => 'add'
 	) );
+
 
 	if ( empty( $react['reaction'] ) || empty( $react['action'] ) || empty( $react['activity_id'] ) ) {
 		wp_send_json_error( $unknown );
 	}
 
+	//gets reactions if nothing fails at this point
 	$reaction = bp_reactions_get_reaction( $react['reaction'] );
 
+	//if the reaction_type is not registered then an unknown error is thrown
 	if ( empty( $reaction->reaction_type ) ) {
 		wp_send_json_error( $unknown );
 	}
 
+	//saves reaction if the action is to add from POST request
 	if ( 'add' === $react['doaction'] ) {
 		$reacted = bp_activity_reactions_add( $react['activity_id'], array( 'type' => $reaction->reaction_type ) );
 	} else {
 		$reacted = bp_activity_reactions_remove( $react['activity_id'], $reaction->reaction_name );
 	}
 
+	//throws error if $reacted does not return an activity id
 	if ( empty( $reacted ) ) {
 		wp_send_json_error( array(
 			'message' => __( 'Saving the reaction failed.', 'bp-reactions' ),

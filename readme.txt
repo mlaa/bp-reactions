@@ -1,6 +1,6 @@
 === BP Reactions ===
-Contributors: imath
-Donate link: http://imathi.eu/donations/
+Contributors: dot07
+Donate link: https://dot07.com
 Tags: BuddyPress, Reactions, Emoji
 Requires at least: 4.5
 Tested up to: 4.5.2
@@ -37,7 +37,7 @@ The video on the main description page of the plugin is explaining how to do it 
 
 = If you have any other questions =
 
-Please add a comment <a href="http://imathi.eu/tag/bp-reactions/">here</a>
+Use the support forum of this plugin.
 
 == Screenshots ==
 

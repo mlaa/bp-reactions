@@ -11,7 +11,7 @@
  * Plugin Name:       BP Reactions
  * Plugin URI:        http://imathi.eu/tag/bp-reactions/
  * Description:       React to BuddyPress activities!
- * Version:           1.1.0
+ * Version:           1.0.1
  * Author:            imath
  * Author URI:        http://imathi.eu
  * Text Domain:       bp-reactions
@@ -72,7 +72,7 @@ final class BP_Reactions {
 	 */
 	private function setup_globals() {
 		/** Plugin globals ********************************************/
-		$this->version       = '1.1.0';
+		$this->version       = '1.0.1';
 		$this->domain        = 'bp-reactions';
 		$this->name          = 'BP Reactions';
 		$this->file          = __FILE__;
@@ -115,21 +115,22 @@ final class BP_Reactions {
 			return;
 		}
 
-		if ( bp_is_active( 'activity' ) ) {
+		//if ( bp_is_active( 'activity' ) ) {
 			require( $this->includes_dir . 'functions.php' );
 			require( $this->includes_dir . 'emojis.php'    );
 			require( $this->includes_dir . 'ajax.php'      );
 			require( $this->includes_dir . 'filters.php'   );
 			require( $this->includes_dir . 'actions.php'   );
-
-			if ( bp_is_active( 'notifications' ) ) {
+	
+			//disable notifications
+			/*if ( bp_is_active( 'notifications' ) ) {
 				require( $this->includes_dir . 'notifications.php'   );
-			}
+			}*/
 
 			if ( is_admin() ) {
 				require( $this->includes_dir . 'admin.php'   );
 			}
-		}
+		//}
 	}
 
 	/**
@@ -139,8 +140,8 @@ final class BP_Reactions {
 	 */
 	private function setup_hooks() {
 		// BuddyPress version is ok
-		if ( $this->version_check() && bp_is_active( 'activity' ) ) {
-
+		if ( $this->version_check() ) {
+		
 			// Register scripts and css.
 			add_action( 'bp_enqueue_scripts',       array( $this, 'register_cssjs'       ), 1 );
 			add_action( 'bp_admin_enqueue_scripts', array( $this, 'register_admin_cssjs' ), 1 );
@@ -200,9 +201,9 @@ final class BP_Reactions {
 	 * @since 1.0.0
 	 */
 	public function enqueue_script() {
-		if ( did_action( 'bp_reactions_enqueued') || ! bp_reactions_is_activity() ) {
+		/*if ( did_action( 'bp_reactions_enqueued') || ! bp_reactions_is_activity() ) {
 			return;
-		}
+		}*/
 
 		wp_enqueue_script ( 'bp-reactions-script' );
 
@@ -213,6 +214,7 @@ final class BP_Reactions {
 				'save'          => wp_create_nonce( 'bp_reactions_save' ),
 			),
 			'emojis'            => bp_reactions_get_emojis(),
+			'reaction_emojis'	=> bp_reactions_get_reaction_emojis(),
 			'is_user_logged_in' => is_user_logged_in(),
 			'reaction_labels'   => wp_list_pluck( bp_reactions_get_reactions(), 'label' ),
 		);
@@ -263,9 +265,9 @@ final class BP_Reactions {
 	 */
 	public function activity_scope_filters() {
 		// Don't need to filter scopes when a unique Reactions subnav is used.
-		if ( bp_reactions_is_unique_subnav() ) {
+		/*if ( bp_reactions_is_unique_subnav() ) {
 			return;
-		}
+		}*/
 
 		$reactions = array_keys( (array) bp_reactions_get_reactions() );
 
@@ -330,3 +332,5 @@ function bp_reactions() {
 	return BP_Reactions::start();
 }
 add_action( 'bp_include', 'bp_reactions', 9 );
+
+$bp_reactions = BP_Reactions::start();

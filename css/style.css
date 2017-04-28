@@ -10,18 +10,22 @@
 	cursor: pointer;
 }
 
-#buddypress .activity-reactions a,
-#buddypress .activity-reactions a.reacted:hover {
-	opacity: 0.55;
-	-webkit-filter: grayscale(1);
-	filter: grayscale(1);
+ul.bp_reactions_reactions_list a {
+	font-size: 18px !important;
 }
 
-#buddypress .activity-reactions a.reacted,
-#buddypress .activity-reactions a:hover {
-	opacity: 1;
-	-webkit-filter: none;
-	filter: none;
+.bp_reactions_reactions_list a,
+.bp_reactions_reactions_list a.reacted:hover {
+	opacity: 0.55 !important;
+	-webkit-filter: grayscale(1) !important;
+	filter: grayscale(1) !important;
+}
+
+.bp_reactions_reactions_list a.reacted,
+.bp_reactions_reactions_list a:hover {
+	opacity: 1 !important;
+	-webkit-filter: none !important;
+	filter: none !important;
 }
 
 #buddypress .activity-list .activity-meta .react.open {
@@ -29,17 +33,117 @@
 	background-color: #FFF;
 }
 
-#buddypress .activity-reactions {
-	display: none;
-}
-
 #buddypress .activity-reactions.active {
-	display: block;
-	margin: -1px 0 0 70px;
-	border-top: 1px solid #ccc;
-	padding-top: 0.6em;
+	padding-top: 5px;
+	border-top: 1px solid rgba(0,0,0, .2);
+	margin: 5px 0 0 0;
+	overflow: hidden;
 }
 
 body.activity-permalink #buddypress .activity-reactions.active {
 	margin: -7px 0 0 70px;
+}
+
+/** new code */
+
+/*.bp_reactions_reactions_list {
+	display: none;
+}*/
+
+.bp_reactions_reactions_list {
+	display: block;
+}
+
+
+.reactions_active {
+	background-color: #0087ff !important;
+}
+
+a.button.react.bp-primary-action {
+    background-color: #ccc;
+    color: white;
+    padding: 5px;
+    box-shadow: none;
+    margin-bottom: 5px;
+}
+
+	.button.react.bp-primary-action:hover {
+		background-color: #0087ff !important;
+	}
+
+	.button.react span {
+		display: none;
+	}
+
+.activity-reactions a:hover {
+	text-decoration: none;
+}
+
+.button.acomment-reply {
+	box-shadow: none;
+}
+
+	.button.acomment-reply:hover {
+		box-shadow: none;
+	}
+
+.bp_reactions_favorite {
+	float: left !important;
+}
+
+.activity-reactions a.reacted:active {
+	background-color: transparent !important;
+}
+
+.activity-reactions a {
+	margin-right: 0 !important;
+}
+	
+	.activity-reactions span sub {
+		font-weight: bold;
+	}
+
+	.activity-reactions a:active, .activity-reactions a:visited {
+		background-color: transparent !important;
+	}
+
+.activity-reactions ul {
+	float: left;
+	height: auto;
+}
+
+	.activity-reactions ul li {
+		margin: 0 5px !important;
+		border-bottom: none !important;
+		float: left !important;
+	}
+
+		.activity-reactions ul li a {
+			width: auto !important;
+			background-color: transparent !important;
+		}
+
+#primary .item-list .activity-reactions li {
+	width: unset !important;
+	float: left !important;
+	padding: unset !important;
+} 
+
+	#primary .item-list .activity-reactions li a {
+		background-color: transparent !important;
+	}
+
+.swa-activity-list .bp_reactions_reactions_list li a {
+	font-size: 15px !important;
+	border-right: none !important;
+	cursor: pointer;
+	padding: 4px 0 !important;
+}
+	
+.swa-activity-list .swa-activity-meta li {
+	margin: 0 5px !important;
+}
+
+#buddypress .activity-meta .button.acomment-reply {
+	margin-right: 0 !important;
 }

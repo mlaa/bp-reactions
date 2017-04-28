@@ -48,7 +48,7 @@ function bp_reactions_register_reaction( $name = '', $args = array() ) {
 }
 
 /**
- * Register Default reactions (favorites/likes)
+ * Register Default reactions (favorites/like/angry/sad.. etc)
  *
  * NB: Hook bp_init to register yours
  *
@@ -68,11 +68,7 @@ function bp_reactions_register_default_reactions() {
 			'emoji'           => '0x2B50',
 			'description'     => __( 'Favorited an update', 'bp-reactions' ),
 			'label'           => __( 'Favorites', 'bp-reactions' ),
-			'format_callback' => 'bp_reactions_favorite_format_callback',
-			'notification_texts' => array(
-				'singular' => __( '%s favorited one of your activities', 'bp-reactions' ),
-				'plural'   => __( 'Some users favorited one of your activities', 'bp-reactions' ),
-			),
+			'format_callback' => 'bp_reactions_favorite_format_callback'
 		) );
 
 		// Remove actions about BuddyPress favoriting
@@ -81,15 +77,40 @@ function bp_reactions_register_default_reactions() {
 	}
 
 	bp_reactions_register_reaction( 'like', array(
-		'emoji'           => '0x2764',
+		'emoji'           => '0x1F497',
 		'description'     => __( 'Liked an update', 'bp-reactions' ),
 		'label'           => __( 'Likes', 'bp-reactions' ),
-		'format_callback' => 'bp_reactions_like_format_callback',
-		'notification_texts' => array(
-			'singular' => __( '%s liked one of your activities', 'bp-reactions' ),
-			'plural'   => __( 'Some users liked one of your activities', 'bp-reactions' ),
-		),
+		'format_callback' => 'bp_reactions_like_format_callback'
 	) );
+
+	bp_reactions_register_reaction( 'thinking_face', array(
+		'emoji'           => '0x1F914',
+		'description'     => __( 'Doesn\'t know what to feel about this update.', 'bp-reactions' ),
+		'label'           => __( 'Angry', 'bp-reactions' ),
+		'format_callback' => 'bp_reactions_angry_format_callback'
+	) );
+
+	bp_reactions_register_reaction( 'disappointed', array(
+		'emoji'           => '0x1F61E',
+		'description'     => __( 'Is disappointed about this update', 'bp-reactions' ),
+		'label'           => __( 'Sad', 'bp-reactions' ),
+		'format_callback' => 'bp_reactions_sad_format_callback'
+	) );
+
+	bp_reactions_register_reaction( 'oneh', array(
+		'emoji'           => '0x1F4AF',
+		'description'     => __( 'Totally likes this update', 'bp-reactions' ),
+		'label'           => __( '100', 'bp-reactions' ),
+		'format_callback' => 'bp_reactions_100_format_callback'
+	) );
+
+	bp_reactions_register_reaction( 'laughing', array(
+		'emoji'           => '0x1F606',
+		'description'     => __( 'Finds this update funny', 'bp-reactions' ),
+		'label'           => __( 'Laughing', 'bp-reactions' ),
+		'format_callback' => 'bp_reactions_laughing_format_callback'
+	) );
+
 }
 
 /**
@@ -382,6 +403,50 @@ function bp_reactions_like_format_callback( $action, $activity ) {
 }
 
 /**
+ * Get an existing reaction by activity ID.
+ *
+ * @since  1.0.0
+ *
+ * @param  int      $activity_id The parent Activity ID.
+ * @param  array    $args        The activity attributes.
+ * @return array              	 The existing reaction on success. False otherwise.
+ */
+function bp_activity_reactions_get( $activity_id = 0, $reaction_id = '', $user_id = 0 ) {
+
+	if ( empty( $activity_id ) || empty( $reaction_id ) ) {
+		return false;
+	}
+
+	$reaction = bp_reactions_get_reaction( $reaction_id );
+
+	if ( empty( $reaction->reaction_type ) ) {
+		return false;
+	}
+
+	if ( empty( $user_id ) ) {
+		$user_id = bp_loggedin_user_id();
+	}
+
+	$reaction_activity = bp_activity_get( array(
+		'show_hidden' => true,
+		'filter'      => array(
+			'user_id'    => $user_id,
+			'object'     => 'reactions',
+			'action'     => $reaction->reaction_type,
+			'primary_id' => $activity_id
+		),
+	) );
+
+	if( empty( $reaction_activity['activities'] ) ) {
+		return false;
+	} else {
+
+		return $reaction_activity;
+	}
+
+}
+
+/**
  * Add a new reaction.
  *
  * @since  1.0.0
@@ -499,7 +564,7 @@ function bp_activity_reactions_remove( $activity_id = 0, $reaction_id = '', $use
 		return false;
 	}
 
-	$deleted = bp_activity_delete( array( 'id' => $activity->id ) );
+	$deleted = bp_activity_delete( array( 'id' => $activity->id, 'object' => 'reactions' ) );
 
 	/**
 	 * Hook here to do specific actions once the reaction was deleted.

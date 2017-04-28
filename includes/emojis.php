@@ -1,4 +1,22 @@
 <?php
+
+/**
+ * Get Reaction emoji's
+ *
+ * @since 1.0.0
+ */
+function bp_reactions_get_reaction_emojis() {
+
+  return array(
+    array( 'id' => '0x1F61E', 'name' => _x( 'disappointed', 'Emoji shortname', 'bp-reactions' ), 'reaction_id' => 'disappointed' ),
+    array( 'id' => '0x1F497', 'name' => _x( 'like', 'Emoji shortname', 'bp-reactions' ), 'reaction_id' => 'like' ),
+    array( 'id' => '0x1F914', 'name' => _x( 'thinking_face', 'Emoji shortname', 'bp-reactions' ), 'reaction_id' => 'thinking_face' ),
+    array( 'id' => '0x1F606', 'name' => _x( 'laughing', 'Emoji shortname', 'bp-reactions' ), 'reaction_id' => 'laughing' ),
+    array( 'id' => '0x1F4AF', 'name' => _x( 'oneh', 'Emoji shortname', 'bp-reactions' ), 'reaction_id' => 'oneh' ),
+  );
+
+}
+
 /**
  * Get Emojis in your language!
  *

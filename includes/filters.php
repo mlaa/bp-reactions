@@ -49,15 +49,18 @@ function bp_reactions_setup_admin_nav( $wp_admin_nav = array() ) {
 	// An admin nav for each registered reactions.
 	} else {
 		foreach ( (array) bp_reactions_get_reactions() as $reaction ) {
-			$wp_admin_nav[] = array(
-				'parent'   => 'my-account-activity',
-				'id'       => 'my-account-activity-' . $reaction->reaction_name,
-				'title'    => $reaction->label,
-				'href'     => trailingslashit( bp_loggedin_user_domain() . bp_get_activity_slug() ) . $reaction->reaction_name . '/',
-				'position' => $position
-			);
 
-			$position += 1;
+			if( $reaction->reaction_name == 'favorite' ) {
+				$wp_admin_nav[] = array(
+					'parent'   => 'my-account-activity',
+					'id'       => 'my-account-activity-' . $reaction->reaction_name,
+					'title'    => $reaction->label,
+					'href'     => trailingslashit( bp_loggedin_user_domain() . bp_get_activity_slug() ) . $reaction->reaction_name . '/',
+					'position' => $position
+				);
+
+				$position += 1;
+			}
 		}
 	}
 
