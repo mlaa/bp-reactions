@@ -327,10 +327,11 @@ final class BP_Reactions {
 	}
 }
 
+
 // Let's start !
 function bp_reactions() {
 	return BP_Reactions::start();
 }
-add_action( 'bp_include', 'bp_reactions', 9 );
+add_action( 'bp_loaded', 'bp_reactions', 9 );
 
-$bp_reactions = BP_Reactions::start();
+//$bp_reactions = BP_Reactions::start();
