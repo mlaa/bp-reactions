@@ -15,9 +15,12 @@ window.bp  = window.bp  || {};
 			}*/
 
 			//convert the raw emoji to visible emoji
-			$('#buddypress .bp_reactions_reactions_list').find('a').each(function(){
-				var emoji = String.fromCodePoint( $(this).text() );
-				$(this).html( emoji );
+			$('#buddypress .bp_reactions_reactions_list').find('a').each(function( key, item ) {
+
+				var hex = $(item).data('bp-reaction-hex'),
+					emoji = String.fromCodePoint( hex );
+				$(item).html( emoji );
+
 			});
 
 			//returns overwriten comment button back to its original form
