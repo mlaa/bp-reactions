@@ -333,4 +333,6 @@ window.bp  = window.bp  || {};
 
 	bp.react.start();
 
+	$(document).ajaxComplete(function() { bp.react.start(); });
+
 } )( bp, jQuery );
