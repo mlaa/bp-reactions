@@ -71,14 +71,12 @@ function bp_reactions_container() {
 			$users = 0;
 		}
 
-		echo "<li><span><a title='{$reaction->reaction_name}' data-bp-reaction-id='{$reaction->reaction_name}' data-bp-reaction-type='bp_activity_reaction_{$reaction->reaction_name}' data-bp-reaction-hex='{$reaction->emoji}'></a><sub class='count'>";
-
 		//outputs count if theres more than one user that reacted
 		if( count( $users ) > 0 ) {
-			echo count( $users );
+			$user_count = count( $users );
 		}
 
-		echo "</sub></span></li>";
+		echo "<li><span><a title='{$reaction->reaction_name}' data-bp-reaction-id='{$reaction->reaction_name}' data-bp-reaction-type='bp_activity_reaction_{$reaction->reaction_name}' data-bp-reaction-hex='{$reaction->emoji}'></a><sub class='count' data-bp-reaction-count='{$user_count}'></sub></span></li>";
 
 	}
 

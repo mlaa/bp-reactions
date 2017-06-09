@@ -7,7 +7,7 @@ window.bp  = window.bp  || {};
 	}
 
 	bp.react = {
-		start: function() {	
+		start: function() {
 
 			// Only logged in users can react!
 			/*if ( ! BP_Reactions.is_user_logged_in ) {
@@ -15,12 +15,9 @@ window.bp  = window.bp  || {};
 			}*/
 
 			//convert the raw emoji to visible emoji
-			$('#buddypress .bp_reactions_reactions_list').find('a').each(function( key, item ) {
-
-				var hex = $(item).data('bp-reaction-hex'),
-					emoji = String.fromCodePoint( hex );
-				$(item).html( emoji );
-
+			$('#buddypress .bp_reactions_reactions_list').find('a').each(function(){
+				var emoji = String.fromCodePoint( $(this).data('bp-reaction-hex') );
+				$(this).html( emoji );
 			});
 
 			//returns overwriten comment button back to its original form
@@ -77,7 +74,7 @@ window.bp  = window.bp  || {};
 
 			//lets create the reaction emojis that will be used by a user on each activity item
 			reaction_emojis = $activity.find('.activity-reactions').each(function() {
-				
+
 				var activityID = $(event.currentTarget).data('bp-activity-id'),
 					$reactions = $( 'li#activity-' + activityID  ).find( '.activity-reactions' ),
 					that = $(this),
@@ -148,15 +145,20 @@ window.bp  = window.bp  || {};
 					//loops through each object and adds their contents to the proper divs
 					$.each(obj, function(k,v) {
 
+						//console.log(v);
+						//console.log( $(this) );
+
 						//adds the reacted class to the div in the activity feed when it returns true from the db
 						if( v.reacted ) {
-							$('#buddypress').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').addClass('reacted').data('bp-reactions-clicked', false); 
+							$('#buddypress').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').addClass('reacted').data('bp-reactions-clicked', false);
 						}
+
+						var reaction_count = $('#buddypress').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count');
 
 						//checks if the count is greater than zero to output the count
 						//clears the <sub> tag if the count is zero
 						if( v.count > 0 ) {
-							$('#buddypress').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count').text( v.count );
+							$('#buddypress').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count').text( reaction_count.data('bp-reaction-count') );
 						} else {
 							$('#buddypress').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count').text('');
 						}
@@ -164,16 +166,18 @@ window.bp  = window.bp  || {};
 						//adds the reacted class to the div in the swa widget on the front-end when it returns true from the db
 						if( v.reacted ) {
 							//for sitewide activity widget on front-page
-							$('.swa-activity-list').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').addClass('reacted').data('bp-reactions-clicked', false); 
+							$('.swa-activity-list').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').addClass('reacted').data('bp-reactions-clicked', false);
 						}
+
+						var swa_reaction_count = $('.swa-activity-list').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count');
 
 						//removes 0 count on swa and adds the actual count on swa when it exists
 						if( v.count > 0 ) {
-							$('.swa-activity-list').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count').text( v.count );
+							$('.swa-activity-list').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count').text( swa_reaction_count.data('bp-reaction-count') );
 						} else {
 							$('.swa-activity-list').find('[data-bp-activity-id="' + v.id + '"]').find('a[data-bp-reaction-id="' + k + '"]').closest('span').find('.count').text('');
 						}
-					
+
 					});
 
 				});
@@ -193,8 +197,8 @@ window.bp  = window.bp  || {};
 				//deal with handling of favorites later
 			}
 
-			var $emojiButton = $( event.currentTarget ), 
-				emojiLink = $.parseHTML( $( event.currentTarget ).html() ), 
+			var $emojiButton = $( event.currentTarget ),
+				emojiLink = $.parseHTML( $( event.currentTarget ).html() ),
 				$spanEmoji,
 				$reactButton = $emojiButton.closest('.bp_reactions_reactions_list'),
 				$spanReact,
@@ -244,8 +248,10 @@ window.bp  = window.bp  || {};
 				action: 'bp_activity_reactions_save',
 				activity_id: $reactButton.data( 'bp-activity-id' ),
 				doaction: $emojiButton.hasClass( 'reacted' ) ? 'remove' : 'add',
-				reaction: $emojiButton.data( 'bp-reaction-id' )
+				reaction: $emojiButton.data( 'bp-reaction-id' ),
+
 			};
+
 
 			//console.log( $emojiButton.data('bp-reaction-id') );
 
@@ -309,7 +315,7 @@ window.bp  = window.bp  || {};
 		addSwaReactions: function() {
 
 			$('.swa-activity-list .bp_reactions_reactions_list').find('a').each(function(){
-				var emoji = String.fromCodePoint( $(this).text() );
+				var emoji = String.fromCodePoint( $(this).data('bp-reaction-hex') );
 				$(this).html( emoji );
 			});
 

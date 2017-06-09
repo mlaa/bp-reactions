@@ -87,7 +87,7 @@ final class BP_Reactions {
 		$this->minified      = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		$this->reactions           = array();
-		$this->is_unique_subnav    = bp_get_option( '_bp_reactions_use_unique_subnav', 0 );
+		//$this->is_unique_subnav    = bp_get_option( '_bp_reactions_use_unique_subnav', 0 );
 		$this->disable_fav_replace = bp_get_option( '_bp_reactions_disable_replace_favorites', 0 );
 	}
 
@@ -111,21 +111,16 @@ final class BP_Reactions {
 	 * @since 1.0.0
 	 */
 	private function includes() {
-		if ( ! $this->version_check() ) {
+		/*if ( ! $this->version_check() ) {
 			return;
 		}
 
-		//if ( bp_is_active( 'activity' ) ) {
+		if ( bp_is_active( 'activity' ) ) {*/
 			require( $this->includes_dir . 'functions.php' );
 			require( $this->includes_dir . 'emojis.php'    );
 			require( $this->includes_dir . 'ajax.php'      );
 			require( $this->includes_dir . 'filters.php'   );
 			require( $this->includes_dir . 'actions.php'   );
-	
-			//disable notifications
-			/*if ( bp_is_active( 'notifications' ) ) {
-				require( $this->includes_dir . 'notifications.php'   );
-			}*/
 
 			if ( is_admin() ) {
 				require( $this->includes_dir . 'admin.php'   );
@@ -141,7 +136,7 @@ final class BP_Reactions {
 	private function setup_hooks() {
 		// BuddyPress version is ok
 		if ( $this->version_check() ) {
-		
+
 			// Register scripts and css.
 			add_action( 'bp_enqueue_scripts',       array( $this, 'register_cssjs'       ), 1 );
 			add_action( 'bp_admin_enqueue_scripts', array( $this, 'register_admin_cssjs' ), 1 );
@@ -265,9 +260,9 @@ final class BP_Reactions {
 	 */
 	public function activity_scope_filters() {
 		// Don't need to filter scopes when a unique Reactions subnav is used.
-		/*if ( bp_reactions_is_unique_subnav() ) {
+		if ( bp_reactions_is_unique_subnav() ) {
 			return;
-		}*/
+		}
 
 		$reactions = array_keys( (array) bp_reactions_get_reactions() );
 
@@ -327,11 +322,10 @@ final class BP_Reactions {
 	}
 }
 
-
 // Let's start !
 function bp_reactions() {
 	return BP_Reactions::start();
 }
-add_action( 'bp_loaded', 'bp_reactions', 9 );
+add_action( 'bp_include', 'bp_reactions', 9 );
 
 //$bp_reactions = BP_Reactions::start();
