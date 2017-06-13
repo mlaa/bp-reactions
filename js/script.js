@@ -7,6 +7,9 @@ window.bp  = window.bp  || {};
 	}
 
 	bp.react = {
+		refresh: function() {
+			return this.start();
+		},
 		start: function() {
 
 			// Only logged in users can react!
@@ -32,8 +35,10 @@ window.bp  = window.bp  || {};
 			// Edit the reactions
 			$( '#buddypress .activity' ).on( 'click', '.activity-list .activity-reactions a', this.saveReaction );
 
-			//for swa reactions
-			this.addSwaReactions();
+			if( BP_Reactions.is_front_page == 1 ) {
+				//for swa reactions
+				this.addSwaReactions();
+			}
 
 		},
 
@@ -339,6 +344,6 @@ window.bp  = window.bp  || {};
 
 	bp.react.start();
 
-	$(document).ajaxComplete(function() { bp.react.start(); });
+	//$(document).ajaxComplete(function() { bp.react.start(); });
 
 } )( bp, jQuery );

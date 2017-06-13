@@ -212,6 +212,7 @@ final class BP_Reactions {
 			'reaction_emojis'	=> bp_reactions_get_reaction_emojis(),
 			'is_user_logged_in' => is_user_logged_in(),
 			'reaction_labels'   => wp_list_pluck( bp_reactions_get_reactions(), 'label' ),
+			'is_front_page'		=> is_front_page()
 		);
 
 		if ( bp_is_user() ) {
