@@ -54,6 +54,10 @@ body.activity-permalink #buddypress .activity-reactions.active {
 	display: block;
 }
 
+	.bp_reactions_reactions_list li a {
+		font-size: 22px;
+	}
+
 
 .reactions_active {
 	background-color: #0087ff !important;
