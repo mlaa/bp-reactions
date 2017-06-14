@@ -54,11 +54,6 @@ body.activity-permalink #buddypress .activity-reactions.active {
 	display: block;
 }
 
-	.bp_reactions_reactions_list li a {
-		font-size: 22px;
-	}
-
-
 .reactions_active {
 	background-color: #0087ff !important;
 }
@@ -150,4 +145,13 @@ a.button.react.bp-primary-action {
 
 #buddypress .activity-meta .button.acomment-reply {
 	margin-right: 0 !important;
+}
+
+@media (min-width: 1200px) {
+
+	/** fixes clipping for emojis on large desktop screens **/
+	ul.bp_reactions_reactions_list a {
+		font-size: 24px !important;
+	}
+
 }
