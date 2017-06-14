@@ -348,7 +348,7 @@ window.bp  = window.bp  || {};
 	$(document).ajaxComplete(function(event, xhr, options) { 
 		
 		//this is the request we want to target -- it contains the feed_url for infinite scroll
-		if( xhr.responseJSON.feed_url.length ) {
+		if( xhr.responseJSON.feed_url.length != undefined ) {
 			bp.react.refresh();
 		}
 
