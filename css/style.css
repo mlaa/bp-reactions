@@ -10,9 +10,9 @@
 	cursor: pointer;
 }
 
-ul.bp_reactions_reactions_list a {
+/*ul.bp_reactions_reactions_list a {
 	font-size: 18px !important;
-}
+}*/
 
 .bp_reactions_reactions_list a,
 .bp_reactions_reactions_list a.reacted:hover {
@@ -49,6 +49,16 @@ body.activity-permalink #buddypress .activity-reactions.active {
 /*.bp_reactions_reactions_list {
 	display: none;
 }*/
+
+.swa-activity-list img.emoji {
+    width: 1.2em !important;
+    height: 1.2em !important;
+}
+
+img.emoji {
+	width: 1.4em !important;
+	height: 1.4em !important;
+}
 
 .bp_reactions_reactions_list {
 	display: block;
@@ -145,13 +155,4 @@ a.button.react.bp-primary-action {
 
 #buddypress .activity-meta .button.acomment-reply {
 	margin-right: 0 !important;
-}
-
-@media (min-width: 1200px) {
-
-	/** fixes clipping for emojis on large desktop screens **/
-	ul.bp_reactions_reactions_list a {
-		font-size: 24px !important;
-	}
-
 }

@@ -17,10 +17,22 @@ window.bp  = window.bp  || {};
 				return;
 			}*/
 
+			//lets set the size of the emoji images we want to bring back
+			twemoji.size = '72x72';
+			//this base url has to be different than the url in bp-reactions.php file
+			//due to cloudflare having all the emojis we need
+			twemoji.base = 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/2.3.0/2/';
+
 			//convert the raw emoji to visible emoji
-			$('#buddypress .bp_reactions_reactions_list').find('a').each(function(){
-				var emoji = String.fromCodePoint( $(this).data('bp-reaction-hex') );
+			$('#buddypress .bp_reactions_reactions_list').find('a').each(function() {
+
+				//remove first two chars in string (0x) to feed to twemoji for parsing
+				var unicode_emoji = $(this).data('bp-reaction-hex').slice(2);
+
+				//converts hex into unicode emoji for html display
+				var emoji = twemoji.parse( twemoji.convert.fromCodePoint( unicode_emoji ) );
 				$(this).html( emoji );
+
 			});
 
 			//returns overwriten comment button back to its original form
@@ -29,12 +41,12 @@ window.bp  = window.bp  || {};
 			//to enable .activity-reactions div
 			$('.activity-reactions').addClass('active');
 
-			//this.createReactionEmojis( this.getActivityIds() );
 			this.addReactions();
 
 			// Edit the reactions
 			$( '#buddypress .activity' ).on( 'click', '.activity-list .activity-reactions a', this.saveReaction );
 
+			//load reactions for swa on front page only
 			if( BP_Reactions.is_front_page == 1 ) {
 				//for swa reactions
 				this.addSwaReactions();
@@ -56,7 +68,7 @@ window.bp  = window.bp  || {};
 		},
 
 		warning: function( message, type, element ) {
-			var output = $( '<div></div>' ).html( '<p>' + String.fromCodePoint( '0x1F631' ) + ' ' + message + '</p>' ).addClass( type ).prop( 'id', 'message' );
+			var output = $( '<div></div>' ).html( '<p>' + twemoji.convert.fromCodePoint( '0x1F631' ) + ' ' + message + '</p>' ).addClass( type ).prop( 'id', 'message' );
 
 			element.append( output );
 
@@ -97,7 +109,7 @@ window.bp  = window.bp  || {};
 				$( BP_Reactions.reaction_emojis ).each(function(k,v) {
 
 					//now we append each reaction emoji to each <li> item
-					that.find('ul').append( $('<li />').append( $('<span />').append( $( '<a />', { title: v.name, "data-bp-reaction-id": v.reaction_id, "data-bp-reaction-type": "bp_activity_reaction_" + v.reaction_id } ).append( String.fromCodePoint( v.id ) ) ) ) );
+					that.find('ul').append( $('<li />').append( $('<span />').append( $( '<a />', { title: v.name, "data-bp-reaction-id": v.reaction_id, "data-bp-reaction-type": "bp_activity_reaction_" + v.reaction_id } ).append( twemoji.convert.fromCodePoint( v.id ) ) ) ) );
 
 				});
 
@@ -119,7 +131,6 @@ window.bp  = window.bp  || {};
 
 		},
 
-		//current code being used
 		addReactions() {
 
 			// Only logged in users can react!
@@ -320,12 +331,17 @@ window.bp  = window.bp  || {};
 		addSwaReactions: function() {
 
 			$('.swa-activity-list .bp_reactions_reactions_list').find('a').each(function(){
-				var emoji = String.fromCodePoint( $(this).data('bp-reaction-hex') );
+
+				//remove first two chars in string (0x) to feed to twemoji for parsing
+				var unicode_emoji = $(this).data('bp-reaction-hex').slice(2);
+
+				//converts hex into unicode emoji for html display
+				var emoji = twemoji.parse( twemoji.convert.fromCodePoint( unicode_emoji ) );
+
 				$(this).html( emoji );
 			});
 
 			$( '.swa-activity-list .activity-item' ).on( 'click', '.activity-reactions a', this.saveReaction );
-
 
 		}
 	};
@@ -337,7 +353,7 @@ window.bp  = window.bp  || {};
 		at: ':',
 		tpl: '<li data-value="${id}">${name} <span class="bp-reactions-emoji">${id}</span></li>',
 		data: $.map( BP_Reactions.emojis, function( value ) {
-			return { 'name': value.name, 'id': String.fromCodePoint( value.id ) };
+			return { 'name': value.name, 'id': twemoji.convert.fromCodePoint( value.id ) };
 		} ),
 		limit: 10
 	} );
@@ -346,9 +362,11 @@ window.bp  = window.bp  || {};
 
 	//lets use the ajaxComplete method to spot the ajax request we want to target
 	$(document).ajaxComplete(function(event, xhr, options) { 
-		
+
+		var response_text = $.parseJSON( xhr.responseText );
+
 		//this is the request we want to target -- it contains the feed_url for infinite scroll
-		if( xhr.responseJSON.feed_url != undefined ) {
+		if( response_text && response_text.contents ) {
 			bp.react.refresh();
 		}
 

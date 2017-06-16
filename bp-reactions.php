@@ -200,6 +200,7 @@ final class BP_Reactions {
 			return;
 		}*/
 
+		wp_enqueue_script( 'twemoji', '//twemoji.maxcdn.com/2/twemoji.min.js?2.3.0', false );
 		wp_enqueue_script ( 'bp-reactions-script' );
 
 		$localization = array(
